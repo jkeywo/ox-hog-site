@@ -32,7 +32,7 @@ test('eleven complete records, unique slugs, valid local artwork and source link
   }
   const heist = games.find(g => g.slug === '2025-07-heist');
   assert.equal(heist.name, 'Heist!');
-  assert.match(heist.description, /Crisis: Mars/);
+  assert.doesNotMatch(heist.description, /Crisis: Mars|lack of ticket sales/);
 });
 
 test('SOXS booking links distinguish convention admission from reserving a game', async () => {
@@ -64,6 +64,37 @@ test('Oxford date boundaries are independent of the visitor timezone, including 
   assert.equal(run("oxfordDate(new Date('2026-03-29T23:00:00Z'))"), '2026-03-30');
   assert.equal(run("dateKey('26 September 2026') < oxfordDate(new Date('2026-09-26T12:00:00Z'))"), false);
   assert.throws(() => run("dateKey('31 February 2026')"), /Invalid event date/);
+});
+
+test('attendance sections surround the description and disappear when the event becomes past', async () => {
+  const events = '-\nname: Game\nslug: game\ndate: 1 May 2099\ntime: 7 PM\nvenue: Test venue\nlogisticsBefore: |\n  Arrival <script>\ndescription: |\n  Game premise.\nlogisticsAfter: |\n  Parking details.';
+  const { app, context, run } = loadApp(async () => ({ ok: true, text: async () => events }));
+  context.location.hash = '#game/game';
+  await run('render()');
+  assert.ok(app.innerHTML.indexOf('Arrival') < app.innerHTML.indexOf('Game premise.'));
+  assert.ok(app.innerHTML.indexOf('Game premise.') < app.innerHTML.indexOf('Parking details.'));
+  assert.match(app.innerHTML, /Arrival &lt;script&gt;/);
+  assert.match(app.innerHTML, /Test venue/);
+  run("oxfordDate = () => '2099-05-02'");
+  await run('render()');
+  assert.match(app.innerHTML, /Game premise\./);
+  assert.doesNotMatch(app.innerHTML, /Arrival|Parking details|Test venue|7 PM|logistics-/);
+});
+
+test('archive descriptions exclude attendance instructions without losing them from event data', async () => {
+  const { app, context, run } = loadApp();
+  context.text = fs.readFileSync('games.neon', 'utf8');
+  const games = run('parseNeon(text).map(normalizeGame)');
+  for (const game of games) {
+    assert.doesNotMatch(game.description, /Turn up|Parking is|Standard tickets|rules will be explained|Age 18|Costumes are|Rules were explained|charged £3|read the rulebook before arriving/);
+    assert.ok(game.logisticsBefore || game.logisticsAfter);
+  }
+  const heist = games.find(g => g.slug === '2025-07-heist');
+  assert.match(heist.logisticsBefore, /Turn up from 6:45 for a 7:00 start/);
+  context.location.hash = '#game/2025-07-heist';
+  await run('render()');
+  assert.match(app.innerHTML, /asymmetric crime caper/);
+  assert.doesNotMatch(app.innerHTML, /Turn up|Crisis: Mars|lack of ticket sales/);
 });
 
 test('untrusted event strings are escaped and unsafe ticket links are rejected', () => {

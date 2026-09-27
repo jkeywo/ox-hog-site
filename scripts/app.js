@@ -354,12 +354,14 @@ async function render() {
       <h1>${escapeHtml(g.name)}</h1>
       ${gameImage(g, 'bannerImage', 'banner')}
       <p><strong>Date:</strong> ${escapeHtml(g.date)}</p>
-      ${g.time ? `<p><strong>Time:</strong> ${escapeHtml(g.time)} (UK time)</p>` : ''}
-      <p><strong>Venue:</strong> ${escapeHtml(g.venue)}</p>
+      ${!g.isPast && g.time ? `<p><strong>Time:</strong> ${escapeHtml(g.time)} (UK time)</p>` : ''}
+      ${!g.isPast ? `<p><strong>Venue:</strong> ${escapeHtml(g.venue)}</p>` : ''}
       ${g.isPast ? '<p class="event-status">This event has taken place.</p>' : ''}
       ${ticketsLink(g)}
       ${!g.isPast && /^https:\/\//i.test(g.eventUrl || '') ? `<p><a href="${escapeAttr(g.eventUrl)}">Event information</a></p>` : ''}
+      ${!g.isPast && g.logisticsBefore ? `<div class="markdown logistics-before">${md(g.logisticsBefore)}</div>` : ''}
       <div class="markdown">${md(g.description)}</div>
+      ${!g.isPast && g.logisticsAfter ? `<div class="markdown logistics-after">${md(g.logisticsAfter)}</div>` : ''}
       ${/^https:\/\//i.test(g.rules || '') ? `<p><a href="${escapeAttr(g.rules)}">Game rules (PDF)</a></p>` : ''}
       ${g.isPast ? `${buildGalleryHTML(g.slug, g.photoList)}` : ''}
     `;

@@ -35,10 +35,14 @@ tagline: A short introduction.
 tickets: https://www.tickettailor.com/events/oxfordhallofgames/REPLACE
 listImage: images/example.jpg
 bannerImage: images/example.jpg
+logisticsBefore: |
+  Attendance information to show before the description.
 description: |
   First paragraph.
 
   Second paragraph, with **bold** or *italic* text.
+logisticsAfter: |
+  Attendance information to show after the description.
 ```
 
 Use English `day Month year` dates and unique lowercase slugs containing only
@@ -58,6 +62,12 @@ There are currently no photo galleries. Descriptions support paragraphs,
 bold and italics; raw HTML is escaped. A `?source=relative-file.neon` query
 can load local test content without changing the main event file.
 
+Keep game information in `description`. The optional `logisticsBefore` and
+`logisticsAfter` fields support the same formatting and appear before and after
+the description for upcoming events. Past event pages hide both logistics
+sections, time, venue and booking notes; they retain the date, game description
+and reference links.
+
 Update general copy, including the code of conduct, in `scripts/site-content.js`.
 Contact details are in `index.html` and `scripts/app.js`. The mailing-list
 message is intentionally plain text until a real signup service is supplied.
@@ -75,11 +85,11 @@ on 27 September 2026. They are served locally:
 | `images/raven-banner.jpg` | https://www.tickettailor.com/events/oxfordhallofgames/1667512 |
 | `images/death-on-high-seas.jpg` | https://www.tickettailor.com/events/oxfordhallofgames/1539250 |
 
-The July 2025 event's title was changed from Crisis: Mars to Heist!; its record
-uses the verified Heist artwork. Death on High Seas had a stale Heist image
+The July 2025 Heist! record uses the verified Heist artwork.
+Death on High Seas had a stale Heist image
 label on Ticket Tailor, but its actual artwork is correct. The two earlier
-event records retain their separate Ticket Tailor links. Historical descriptions
-retain the original event instructions and are labelled as past events.
+event records retain their separate Ticket Tailor links. Original attendance
+instructions are stored separately and hidden for past events.
 
 Additional events verified on 27 September 2026:
 
