@@ -64,6 +64,8 @@ and `photos` (comma-separated filenames under `photos/<slug>/`). The `photos`
 directory is included in site deployments. Galleries currently cover New Eden
 on 12 April and 14 June 2024, and Heist! on 18 October 2024; the seven photos
 were supplied in `archive.zip` and matched by their filenames.
+`archive (1).zip` supplied one photo for Heist! on 4 July 2025 and four for
+The Raven Banner on 9 May 2025, matched using their embedded capture dates.
 Descriptions support paragraphs,
 bold and italics; raw HTML is escaped. A `?source=relative-file.neon` query
 can load local test content without changing the main event file.
