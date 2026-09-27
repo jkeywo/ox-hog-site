@@ -31,6 +31,8 @@ jobs:
           path: .site/
           retention-days: 90
           if-no-files-found: error
+          # The allowlisted package directory itself starts with a dot.
+          include-hidden-files: true
       - name: Package GitHub Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
