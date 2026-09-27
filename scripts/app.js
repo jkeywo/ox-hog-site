@@ -73,7 +73,7 @@ function renderHomeIntro() {
 }
 
 function renderAboutHTML() {
-  const { about, conduct } = window.siteContent;
+  const { about, conduct, photos } = window.siteContent;
 
   return `
     <h1>${escapeHtml(about.heading)}</h1>
@@ -86,6 +86,8 @@ function renderAboutHTML() {
     <ul>${conduct.rules.map(rule => `<li>${escapeHtml(rule)}</li>`).join('')}</ul>
     <p>${escapeHtml(conduct.note)}</p>
     <p>${escapeHtml(conduct.closing)}</p>
+    <h2>${escapeHtml(photos.heading)}</h2>
+    <p>${escapeHtml(photos.paragraph)}</p>
   `;
 }
 

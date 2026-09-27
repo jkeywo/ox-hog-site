@@ -24,5 +24,9 @@ window.siteContent = {
     ],
     note: 'Note: we are aware that our games can include elements of roleplaying, and that good-faith attempts to roleplay aggressive or demanding characters may nevertheless be upsetting to others. Where appropriate, we will discuss these situations with players, and provided they are willing to change their behaviour accordingly, no further action will be taken.',
     closing: 'We understand that there is always room for improvement in the area of diversity and inclusion, and we welcome feedback on this code of conduct or any other aspect of how we manage our games and community.'
+  },
+  photos: {
+    heading: 'Photos',
+    paragraph: "We’ll take photos during our games to share on our website and social media. If you’d rather not appear, please let an organiser know and we’ll do our best to keep you out of the foreground."
   }
 };
