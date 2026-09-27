@@ -12,10 +12,6 @@ ticketLabel: SOXS Con tickets
 bookingNote: Buy admission to SOXS Con, then use the Bookaby link in your confirmation email to reserve a place in The Black Swan Crisis. Convention admission alone does not reserve your game place.
 listImage: images/black-swan.jpg
 bannerImage: images/black-swan.jpg
-logisticsBefore: |
-  This session is for 8–24 players and takes place in The Lounge during SOXS Con's evening session.
-
-  **Age 18+ only.**
 description: |
   International relief efforts, civil wars, political turmoil — the world is in crisis, and you will take on the role of a national or global leader trying to navigate it.
 
@@ -24,6 +20,10 @@ description: |
   Can you work out what’s going on, and make the right decisions? And can you push your own agenda forward at the same time?
 
   The Black Swan Crisis is a narrative-focused game of geopolitics meeting the unknown. Deploy your limited resources wisely and creatively, cooperate or betray, and create a shared narrative that shapes the world’s future.
+logisticsAfter: |
+  This session is for 8–24 players and takes place in The Lounge during SOXS Con's evening session.
+
+  **Age 18+ only.**
 
 -
 name: Crisis: Mars — SOXS Con 2025
