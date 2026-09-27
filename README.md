@@ -90,8 +90,10 @@ Additional events verified on 27 September 2026:
   [2025 programme](https://www.soxsgamingday.org.uk/soxs-con-2025/) and [Eventbrite](https://www.eventbrite.com/e/soxs-con-2025-tickets-1696134506969).
 - **2 November 2024:** [Den of Wolves: New Eden](https://www.soxsgamingday.org.uk/mini-megagame-den-of-wolves-new-eden/), confirmed against the
   [2024 programme](https://www.soxsgamingday.org.uk/soxs-con-2024/) and [Eventbrite](https://www.eventbrite.com/e/soxs-con-tickets-1016611631757).
-- **14 June 2024:** the first Oxford New Eden event, confirmed by its
+- **14 June 2024:** an Oxford New Eden event, confirmed by its
   [Meetup listing](https://www.meetup.com/oxfordonboard/events/300449594/), 18:30–22:30 at Ark-T @ The Venue.
+- **12 April 2024:** the earlier Oxford New Eden event, confirmed by its
+  [Meetup listing](https://www.meetup.com/oxfordonboard/events/299631195/), 19:00–23:00 at Ark-T @ The Venue.
 
 `images/crisis-mars.png` and `images/new-eden.png` are the existing 2048×652
 Ticket Tailor banners from the respective game folders under `C:\Art and Design`.

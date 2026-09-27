@@ -17,13 +17,13 @@ function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileS
   return { context, app, grid, run: code => vm.runInContext(code, context) };
 }
 
-test('ten complete records, unique slugs, valid local artwork and source links', () => {
+test('eleven complete records, unique slugs, valid local artwork and source links', () => {
   const { context, run } = loadApp();
   context.text = fs.readFileSync('games.neon', 'utf8');
   const games = run('parseNeon(text).map(normalizeGame)');
-  assert.equal(games.length, 10);
-  assert.equal(new Set(games.map(g => g.slug)).size, 10);
-  assert.deepEqual(Array.from(games, g => g.dateKey).sort(), ['2024-06-14','2024-08-02','2024-10-18','2024-11-02','2025-02-14','2025-05-09','2025-07-04','2025-11-01','2026-09-26','2026-11-07']);
+  assert.equal(games.length, 11);
+  assert.equal(new Set(games.map(g => g.slug)).size, 11);
+  assert.deepEqual(Array.from(games, g => g.dateKey).sort(), ['2024-04-12','2024-06-14','2024-08-02','2024-10-18','2024-11-02','2025-02-14','2025-05-09','2025-07-04','2025-11-01','2026-09-26','2026-11-07']);
   for (const game of games) {
     assert.match(game.eventUrl || game.tickets, /^https:\/\//);
     assert.ok(game.description.length > 100);
