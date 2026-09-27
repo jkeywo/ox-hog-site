@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oxford Hall of Games</title>
+  <meta name="description" content="Small megagames and murder mysteries in Oxford. Explore our past games and find your next adventure with Oxford Hall of Games." />
+  <link rel="icon" type="image/png" href="logos/oxhog.png" />
+  <link rel="stylesheet" href="styles/site.css" />
+  <script src="scripts/site-content.js" defer></script>
+  <script src="scripts/app.js" defer></script>
+</head>
+<body>
+
+<header>
+  <a class="site-logo" href="#home" data-route="home"><img src="logos/oxhog.png" alt="" width="512" height="512" /><span>Oxford<br>Hall of Games</span></a>
+  <nav aria-label="Main navigation">
+    <a href="#home" data-route="home">HOME</a>
+    <a href="#upcoming" data-route="upcoming">Upcoming Games</a>
+    <a href="#past" data-route="past">Past Games</a>
+    <a href="#about" data-route="about">About Us</a>
+  </nav>
+</header>
+
+<main id="app" class="container" aria-live="polite"><p>Loading games…</p></main>
+<noscript><p class="container">Please enable JavaScript to explore our games, or visit <a href="https://www.tickettailor.com/events/oxfordhallofgames">Oxford Hall of Games on Ticket Tailor</a>.</p></noscript>
+
+<div id="lightbox" class="lightbox" data-lightbox-close>
+  <img id="lightbox-img" alt="">
+</div>
+
+<footer>
+  &copy; Oxford Hall of Games 2026 &bull; Contact: <a href="mailto:spa263-oxhog@yahoo.com">spa263-oxhog@yahoo.com</a> &bull; <a href="#about" data-route="about">Code of Conduct</a>
+</footer>
+
+</body>
+</html>

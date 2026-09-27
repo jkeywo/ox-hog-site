@@ -1,0 +1,10 @@
+{
+  "name": "ox-hog-site",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "package": "node tools/package.mjs",
+    "start": "node tools/serve.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

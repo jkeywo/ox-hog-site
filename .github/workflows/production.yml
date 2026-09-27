@@ -1,0 +1,71 @@
+name: Promote to production
+
+on:
+  workflow_dispatch:
+    inputs:
+      staging_run_id:
+        description: 'Successful staging run ID (blank = latest successful published run; older run = rollback)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-production
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ox-hog-site.pages.dev/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select a successfully published staging artifact
+        id: release
+        uses: actions/github-script@v7
+        env:
+          STAGING_RUN_ID: ${{ inputs.staging_run_id }}
+        with:
+          script: |
+            const { selectRelease } = require('./tools/select-release.cjs');
+            await selectRelease({ github, context, core, runId: process.env.STAGING_RUN_ID });
+      - name: Check Cloudflare configuration
+        env:
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          test -n "$CF_ACCOUNT" || { echo '::error::Set CLOUDFLARE_ACCOUNT_ID in repository secrets.'; exit 1; }
+          test -n "$CF_TOKEN" || { echo '::error::Set CLOUDFLARE_API_TOKEN in repository secrets.'; exit 1; }
+      - name: Download the selected site without rebuilding
+        uses: actions/download-artifact@v4
+        with:
+          name: site-release
+          path: release
+          run-id: ${{ steps.release.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish identical files to Cloudflare Pages
+        id: deployment
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.103.0'
+          command: pages deploy release --project-name=ox-hog-site --branch=production --commit-hash=${{ steps.release.outputs.sha }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Record production release
+        env:
+          SOURCE_SHA: ${{ steps.release.outputs.sha }}
+          RUN_ID: ${{ steps.release.outputs.run_id }}
+          DEPLOYMENT_URL: ${{ steps.deployment.outputs.deployment-url }}
+        run: |
+          echo "### Production promoted" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source commit: $SOURCE_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Staging run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployment: $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Production: https://ox-hog-site.pages.dev/" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,93 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+
+function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileSync('games.neon', 'utf8') })) {
+  const app = { innerHTML: '' };
+  const context = vm.createContext({
+    URL, Intl, Date, console: { error() {} }, fetch, setInterval() {},
+    location: { hash: '#home' },
+    window: { location: 'https://example.com/', addEventListener() {}, matchMedia: () => ({ matches: true }) },
+    document: { title: '', hidden: false, querySelectorAll: () => [], addEventListener() {}, getElementById: () => app }
+  });
+  vm.runInContext(fs.readFileSync('scripts/site-content.js', 'utf8'), context);
+  vm.runInContext(fs.readFileSync('scripts/app.js', 'utf8'), context);
+  return { context, app, run: code => vm.runInContext(code, context) };
+}
+
+test('six complete Oxford records, unique slugs, valid local artwork and links', () => {
+  const { context, run } = loadApp();
+  context.text = fs.readFileSync('games.neon', 'utf8');
+  const games = run('parseNeon(text).map(normalizeGame)');
+  assert.equal(games.length, 6);
+  assert.equal(new Set(games.map(g => g.slug)).size, 6);
+  assert.deepEqual(Array.from(games, g => g.dateKey), ['2026-09-26','2025-07-04','2025-05-09','2025-02-14','2024-10-18','2024-08-02']);
+  for (const game of games) {
+    assert.match(game.tickets, /^https:\/\/www.tickettailor.com\/events\/oxfordhallofgames\/\d+$/);
+    assert.ok(game.description.length > 100);
+    assert.ok(game.venue && game.time);
+    for (const key of ['listImage','bannerImage']) assert.ok(fs.existsSync(game[key]));
+  }
+  assert.equal(games[1].name, 'Heist!');
+  assert.match(games[1].description, /Crisis: Mars/);
+});
+
+test('Oxford date boundaries are independent of the visitor timezone, including DST', () => {
+  const { run } = loadApp();
+  assert.equal(run("oxfordDate(new Date('2026-09-26T22:59:59Z'))"), '2026-09-26');
+  assert.equal(run("oxfordDate(new Date('2026-09-26T23:00:00Z'))"), '2026-09-27');
+  assert.equal(run("oxfordDate(new Date('2026-01-02T23:30:00Z'))"), '2026-01-02');
+  assert.equal(run("oxfordDate(new Date('2026-03-29T23:00:00Z'))"), '2026-03-30');
+  assert.equal(run("dateKey('26 September 2026') < oxfordDate(new Date('2026-09-26T12:00:00Z'))"), false);
+  assert.throws(() => run("dateKey('31 February 2026')"), /Invalid event date/);
+});
+
+test('untrusted event strings are escaped and unsafe ticket links are rejected', () => {
+  const { run } = loadApp();
+  assert.equal(run("md('<img src=x onerror=alert(1)> **Safe**')"), '<p>&lt;img src=x onerror=alert(1)&gt; <strong>Safe</strong></p>');
+  assert.equal(run("ticketsLink({tickets:'javascript:alert(1)'})"), '');
+  assert.equal(run("md('First paragraph.\\n  \\n  Second paragraph.')"), '<p>First paragraph.</p><p>Second paragraph.</p>');
+  assert.match(run("ticketsLink({tickets:'https://example.com/',isPast:true})"), /Original event listing/);
+});
+
+test('home shows a useful empty state for an empty event file', async () => {
+  const { app, run } = loadApp(async () => ({ ok: true, text: async () => '' }));
+  await run('render()');
+  assert.match(app.innerHTML, /No upcoming events announced/);
+  assert.match(app.innerHTML, /Mailing list coming soon/);
+  assert.doesNotMatch(app.innerHTML, /discord|filesusr/);
+});
+
+test('failed HTTP fetch displays recovery links and About still works', async () => {
+  let calls = 0;
+  const { app, context, run } = loadApp(async () => { calls++; return { ok: false, status: 404 }; });
+  await run('render()');
+  assert.match(app.innerHTML, /Games could not be loaded/);
+  assert.match(app.innerHTML, /tickettailor/);
+  const before = calls;
+  context.location.hash = '#about';
+  await run('render()');
+  assert.match(app.innerHTML, /Code of Conduct/);
+  assert.equal(calls, before);
+});
+
+test('malformed dates, duplicate slugs and HTML responses fail visibly', async () => {
+  for (const content of ['<!doctype html>Not found', '-\nname: Invalid\nslug: invalid\ndate: 99 May 2025', '-\nname: One\nslug: same\ndate: 1 May 2025\n-\nname: Two\nslug: same\ndate: 2 May 2025']) {
+    const { app, run } = loadApp(async () => ({ ok: true, text: async () => content }));
+    await run('render()');
+    assert.match(app.innerHTML, /Games could not be loaded/);
+  }
+});
+
+test('unknown and malformed game routes have a useful result', async () => {
+  const { app, context, run } = loadApp();
+  for (const hash of ['#game/missing', '#game/%E0%A4%A']) {
+    context.location.hash = hash;
+    await run('render()');
+    assert.match(app.innerHTML, /Game not found/);
+  }
+  context.location.hash = '#missing';
+  await run('render()');
+  assert.match(app.innerHTML, /Page not found/);
+});
