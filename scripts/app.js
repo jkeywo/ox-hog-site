@@ -438,7 +438,8 @@ async function render() {
         <div class="card">
           ${gameImage(g, 'listImage', 'list-img', dataRouteAttr(g))}
           <h2 ${dataRouteAttr(g)}>${escapeHtml(g.name)}</h2>
-          <p>${escapeHtml(g.date)}</p><p>${escapeHtml(g.venue || '')}</p>
+          <p>${escapeHtml(g.date)}</p>
+          ${g.location ? `<p><strong>Location:</strong> ${escapeHtml(g.location)}</p>` : ''}
           ${eventMetaHTML(g)}
           <p>${escapeHtml(g.tagline || '')}</p>
           ${detailsLink(g)}
@@ -456,6 +457,7 @@ async function render() {
           ${gameImage(g, 'listImage', 'list-img', dataRouteAttr(g))}
           <h2 ${dataRouteAttr(g)}>${escapeHtml(g.name)}</h2>
           <p>${escapeHtml(g.date)}</p>
+          ${g.location ? `<p><strong>Location:</strong> ${escapeHtml(g.location)}</p>` : ''}
           <p>${escapeHtml(g.tagline || '')}</p>
           ${detailsLink(g, 'View')}
         </div>

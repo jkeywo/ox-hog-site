@@ -30,7 +30,7 @@ slug: 2027-05-example
 date: 14 May 2027
 time: 7:00 PM – 10:30 PM
 venue: Venue name and postcode
-location: OXFORD
+location: The Venue@Ark-T
 tagline: A short introduction.
 tickets: https://www.tickettailor.com/events/oxfordhallofgames/REPLACE
 listImage: images/example.jpg
@@ -51,6 +51,10 @@ Events remain upcoming on their event date and become past at the next
 midnight in Europe/London, regardless of the visitor's timezone. Times are
 display text in UK local time. Classification happens in the browser on navigation
 or reload, so no scheduled publication is needed.
+
+Use `location` for the short label on upcoming and past cards (for example,
+`SOXS Con` or `The Venue@Ark-T`). Keep the full address in `venue` for event
+details. Event names need only the game title; dates and locations identify runs.
 
 Optional fields: `theme`, `complexity`, `rules` (HTTPS rules-document link),
 `eventUrl` (original event information, separate from the ticket checkout),
