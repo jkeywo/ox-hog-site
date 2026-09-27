@@ -233,7 +233,9 @@ const carouselImages = [
   { src: 'images/black-swan.jpg', name: 'The Black Swan Crisis', slug: '2026-09-black-swan' },
   { src: 'images/heist.jpg', name: 'Heist!', slug: '2025-07-heist' },
   { src: 'images/raven-banner.jpg', name: 'The Raven Banner', slug: '2025-05-raven-banner' },
-  { src: 'images/death-on-high-seas.jpg', name: 'Death on High Seas', slug: '2025-02-death-on-high-seas' }
+  { src: 'images/death-on-high-seas.jpg', name: 'Death on High Seas', slug: '2025-02-death-on-high-seas' },
+  { src: 'images/new-eden.png', name: 'Den of Wolves: New Eden', slug: '2024-11-new-eden-soxs' },
+  { src: 'images/crisis-mars.png', name: 'Crisis: Mars', slug: '2025-11-crisis-mars-soxs' }
 ];
 
 let carouselIndex = 0;
