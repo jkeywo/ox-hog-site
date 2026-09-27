@@ -17,21 +17,43 @@ function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileS
   return { context, app, grid, run: code => vm.runInContext(code, context) };
 }
 
-test('six complete Oxford records, unique slugs, valid local artwork and links', () => {
+test('ten complete records, unique slugs, valid local artwork and source links', () => {
   const { context, run } = loadApp();
   context.text = fs.readFileSync('games.neon', 'utf8');
   const games = run('parseNeon(text).map(normalizeGame)');
-  assert.equal(games.length, 6);
-  assert.equal(new Set(games.map(g => g.slug)).size, 6);
-  assert.deepEqual(Array.from(games, g => g.dateKey), ['2026-09-26','2025-07-04','2025-05-09','2025-02-14','2024-10-18','2024-08-02']);
+  assert.equal(games.length, 10);
+  assert.equal(new Set(games.map(g => g.slug)).size, 10);
+  assert.deepEqual(Array.from(games, g => g.dateKey).sort(), ['2024-06-14','2024-08-02','2024-10-18','2024-11-02','2025-02-14','2025-05-09','2025-07-04','2025-11-01','2026-09-26','2026-11-07']);
   for (const game of games) {
-    assert.match(game.tickets, /^https:\/\/www.tickettailor.com\/events\/oxfordhallofgames\/\d+$/);
+    assert.match(game.eventUrl || game.tickets, /^https:\/\//);
     assert.ok(game.description.length > 100);
     assert.ok(game.venue && game.time);
     for (const key of ['listImage','bannerImage']) assert.ok(fs.existsSync(game[key]));
   }
-  assert.equal(games[1].name, 'Heist!');
-  assert.match(games[1].description, /Crisis: Mars/);
+  const heist = games.find(g => g.slug === '2025-07-heist');
+  assert.equal(heist.name, 'Heist!');
+  assert.match(heist.description, /Crisis: Mars/);
+});
+
+test('SOXS booking links distinguish convention admission from reserving a game', async () => {
+  const { context, app, grid, run } = loadApp();
+  context.text = fs.readFileSync('games.neon', 'utf8');
+  const games = run('parseNeon(text).map(normalizeGame)');
+  const upcoming = games.filter(g => g.dateKey >= '2026-09-27');
+  assert.equal(upcoming.length, 1);
+  assert.equal(upcoming[0].slug, '2026-11-black-swan-soxs');
+  assert.match(upcoming[0].tickets, /eventbrite.com\/e\/soxs-con-2026/);
+  context.game = upcoming[0];
+  const link = run('ticketsLink(game)');
+  assert.match(link, />SOXS Con tickets</);
+  assert.match(link, /Bookaby/);
+  assert.match(link, /does not reserve your game place/);
+  context.game.isPast = true;
+  assert.match(run('ticketsLink(game)'), /href="https:\/\/www.soxsgamingday.org.uk\/megagame-the-black-swan-crisis\//);
+  assert.doesNotMatch(run('ticketsLink(game)'), /Bookaby|eventbrite/);
+  context.game = games.find(g => g.slug === '2024-06-new-eden');
+  context.game.isPast = true;
+  assert.match(run('ticketsLink(game)'), /meetup.com\/oxfordonboard\/events\/300449594/);
 });
 
 test('Oxford date boundaries are independent of the visitor timezone, including DST', () => {

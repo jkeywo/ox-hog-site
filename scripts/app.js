@@ -33,8 +33,11 @@ function dataRouteAttr(game) {
 }
 
 function ticketsLink(game) {
-  if (!/^https:\/\//i.test(game.tickets || '')) return '';
-  return `<a class="ticket-btn" href="${escapeAttr(game.tickets)}" target="_blank" rel="noopener noreferrer">${game.isPast ? 'Original event listing' : 'Tickets'}</a>`;
+  const url = game.isPast ? (game.eventUrl || game.tickets) : game.tickets;
+  if (!/^https:\/\//i.test(url || '')) return '';
+  const label = game.isPast ? 'Original event listing' : (game.ticketLabel || 'Tickets');
+  const note = !game.isPast && game.bookingNote ? `<p class="booking-note">${escapeHtml(game.bookingNote)}</p>` : '';
+  return `<a class="ticket-btn" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>${note}`;
 }
 
 function detailsLink(game, label = 'Details') {
@@ -355,6 +358,7 @@ async function render() {
       <p><strong>Venue:</strong> ${escapeHtml(g.venue)}</p>
       ${g.isPast ? '<p class="event-status">This event has taken place.</p>' : ''}
       ${ticketsLink(g)}
+      ${!g.isPast && /^https:\/\//i.test(g.eventUrl || '') ? `<p><a href="${escapeAttr(g.eventUrl)}">Event information</a></p>` : ''}
       <div class="markdown">${md(g.description)}</div>
       ${/^https:\/\//i.test(g.rules || '') ? `<p><a href="${escapeAttr(g.rules)}">Game rules (PDF)</a></p>` : ''}
       ${g.isPast ? `${buildGalleryHTML(g.slug, g.photoList)}` : ''}

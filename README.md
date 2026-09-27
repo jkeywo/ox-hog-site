@@ -49,6 +49,9 @@ display text in UK local time. Classification happens in the browser on navigati
 or reload, so no scheduled publication is needed.
 
 Optional fields: `theme`, `complexity`, `rules` (HTTPS rules-document link),
+`eventUrl` (original event information, separate from the ticket checkout),
+`ticketLabel` (for example, `SOXS Con tickets`), `bookingNote` (shown beside
+upcoming ticket buttons, including on the homepage),
 and `photos` (comma-separated filenames under `photos/<slug>/`). If adding
 photos, also add `photos` to the public-file list in `tools/package.mjs`.
 There are currently no photo galleries. Descriptions support paragraphs,
@@ -77,6 +80,23 @@ uses the verified Heist artwork. Death on High Seas had a stale Heist image
 label on Ticket Tailor, but its actual artwork is correct. The two earlier
 event records retain their separate Ticket Tailor links. Historical descriptions
 retain the original event instructions and are labelled as past events.
+
+Additional events verified on 27 September 2026:
+
+- **7 November 2026:** The Black Swan Crisis, SOXS Con. The [session page](https://www.soxsgamingday.org.uk/megagame-the-black-swan-crisis/)
+  supplies the evening slot; the [convention ticket listing](https://www.eventbrite.com/e/soxs-con-2026-tickets-1993770446075)
+  confirms date, venue and the separate Bookaby reservation step.
+- **1 November 2025:** [Crisis: Mars](https://www.soxsgamingday.org.uk/megagame-crisis-mars/), confirmed against the
+  [2025 programme](https://www.soxsgamingday.org.uk/soxs-con-2025/) and [Eventbrite](https://www.eventbrite.com/e/soxs-con-2025-tickets-1696134506969).
+- **2 November 2024:** [Den of Wolves: New Eden](https://www.soxsgamingday.org.uk/mini-megagame-den-of-wolves-new-eden/), confirmed against the
+  [2024 programme](https://www.soxsgamingday.org.uk/soxs-con-2024/) and [Eventbrite](https://www.eventbrite.com/e/soxs-con-tickets-1016611631757).
+- **14 June 2024:** the first Oxford New Eden event, confirmed by its
+  [Meetup listing](https://www.meetup.com/oxfordonboard/events/300449594/), 18:30–22:30 at Ark-T @ The Venue.
+
+`images/crisis-mars.png` and `images/new-eden.png` are the existing 2048×652
+Ticket Tailor banners from the respective game folders under `C:\Art and Design`.
+Both were visually checked before copying. SOXS game details link to their
+original session pages; upcoming ticket buttons point to convention admission.
 
 Replace artwork by adding an image and updating the event fields. Homepage
 slides are configured in `carouselImages` in `scripts/app.js`; keep the name,
