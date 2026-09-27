@@ -219,6 +219,28 @@ function buildGalleryHTML(slug, photoList) {
   return html;
 }
 
+function galleryPhotoSizes(width, columns, gap, ratios) {
+  const unit = (width - gap * (columns - 1)) / columns;
+  const area = Math.min(unit * unit, width * width / Math.max(1, ...ratios));
+  return ratios.map(ratio => ({ width: Math.sqrt(area * ratio), height: Math.sqrt(area / ratio) }));
+}
+
+function sizeGallery(gallery) {
+  const photos = [...gallery.querySelectorAll('img')].filter(photo => photo.naturalWidth);
+  if (!photos.length) return;
+  const style = getComputedStyle(gallery);
+  const sizes = galleryPhotoSizes(gallery.clientWidth, Number(style.getPropertyValue('--gallery-columns')), parseFloat(style.columnGap), photos.map(photo => photo.naturalWidth / photo.naturalHeight));
+  photos.forEach((photo, index) => {
+    photo.style.width = `${sizes[index].width}px`;
+    photo.style.height = `${sizes[index].height}px`;
+  });
+}
+
+document.addEventListener('load', event => {
+  if (event.target.matches?.('.gallery img')) sizeGallery(event.target.closest('.gallery'));
+}, true);
+window.addEventListener('resize', () => document.querySelectorAll('.gallery').forEach(sizeGallery));
+
 /* -------- LIGHTBOX -------- */
 function openLightbox(src) {
   const lb = document.getElementById('lightbox');

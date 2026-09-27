@@ -182,3 +182,17 @@ test('unknown and malformed game routes have a useful result', async () => {
   await run('render()');
   assert.match(app.innerHTML, /Page not found/);
 });
+
+test('gallery photos have equal area and retain proportions even on narrow screens', () => {
+  const { context, run } = loadApp();
+  context.ratios = [0.625, 16 / 9, 4 / 3, 5];
+  for (const [width, columns] of [[1100, 4], [737, 2], [343, 1]]) {
+    const sizes = run(`galleryPhotoSizes(${width}, ${columns}, 9.6, ratios)`);
+    const area = sizes[0].width * sizes[0].height;
+    sizes.forEach((size, i) => {
+      assert.ok(Math.abs(size.width * size.height - area) < 0.001);
+      assert.ok(Math.abs(size.width / size.height - context.ratios[i]) < 0.001);
+      assert.ok(size.width <= width);
+    });
+  }
+});
