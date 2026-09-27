@@ -113,6 +113,27 @@ test('home shows a useful empty state for an empty event file', async () => {
   assert.doesNotMatch(app.innerHTML, /discord|filesusr/);
 });
 
+test('navigation revalidates event data and shows newly published edits', async () => {
+  let name = 'Original title';
+  const requests = [];
+  const { app, context, run } = loadApp(async (url, options) => {
+    requests.push({ url, cache: options.cache });
+    const text = `-\nname: ${name}\nslug: updated\ndate: 1 May 2000\ndescription: Game information.`;
+    return { ok: true, text: async () => text };
+  });
+  await run('render()');
+  context.location.hash = '#game/updated';
+  await run('render()');
+  assert.match(app.innerHTML, /Original title/);
+  const before = requests.length;
+  name = 'Updated title';
+  await run('render()');
+  assert.equal(requests.length, before + 1);
+  assert.match(app.innerHTML, /Updated title/);
+  assert.doesNotMatch(app.innerHTML, /Original title/);
+  assert.ok(requests.every(request => request.url === 'games.neon' && request.cache === 'no-cache'));
+});
+
 test('future events sort earliest first, past events latest first, with appropriate ticket actions', async () => {
   const events = '-\nname: Later\nslug: later\ndate: 2 May 2099\ntickets: https://example.com/later\n-\nname: Earlier\nslug: earlier\ndate: 1 May 2099\ntickets: https://example.com/earlier\n-\nname: Old\nslug: old\ndate: 1 May 2000\n-\nname: Recent\nslug: recent\ndate: 1 May 2001';
   const { app, grid, context, run } = loadApp(async () => ({ ok: true, text: async () => events }));

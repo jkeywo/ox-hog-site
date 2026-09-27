@@ -136,6 +136,7 @@ function parseNeon(text) {
 }
 
 /* -------- LOAD -------- */
+// Share requests only while they are in flight; later navigation revalidates data.
 const gamesBySource = new Map();
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -184,7 +185,7 @@ async function loadGames() {
   const gamesSource = getGamesSource();
 
   if (!gamesBySource.has(gamesSource)) {
-    const gamesPromise = fetch(gamesSource)
+    const gamesPromise = fetch(gamesSource, { cache: 'no-cache' })
       .then(res => { if (!res.ok) throw new Error(`Events request failed (${res.status})`); return res.text(); })
       .then(text => {
         const games = parseNeon(text).map(normalizeGame);
@@ -192,9 +193,8 @@ async function loadGames() {
         if (!games.length && text.trim()) throw new Error('Invalid event file');
         return games;
       })
-      .catch(error => {
+      .finally(() => {
         gamesBySource.delete(gamesSource);
-        throw error;
       });
 
     gamesBySource.set(gamesSource, gamesPromise);

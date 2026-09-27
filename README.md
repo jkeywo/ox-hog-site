@@ -51,6 +51,9 @@ Events remain upcoming on their event date and become past at the next
 midnight in Europe/London, regardless of the visitor's timezone. Times are
 display text in UK local time. Classification happens in the browser on navigation
 or reload, so no scheduled publication is needed.
+Event data is revalidated with the server on each route change or reload.
+Only requests already in flight are shared; completed event data is not kept
+in a page-lifetime cache. Unchanged files can use HTTP conditional responses.
 
 Use `location` for the short label on upcoming and past cards (for example,
 `SOXS Con` or `The Venue@Ark-T`). Keep the full address in `venue` for event
