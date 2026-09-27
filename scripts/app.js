@@ -212,7 +212,7 @@ function buildGalleryHTML(slug, photoList) {
   let html = '<h2>Photos</h2><div class="gallery">';
   photoList.forEach(name => {
     const src = `photos/${pathSegment(slug)}/${pathSegment(name)}`;
-    html += `<img src="${escapeAttr(src)}" alt="" loading="lazy" decoding="async" width="320" height="240" data-lightbox-src="${escapeAttr(src)}">`;
+    html += `<img src="${escapeAttr(src)}" alt="" loading="lazy" decoding="async" data-lightbox-src="${escapeAttr(src)}">`;
   });
 
   html += '</div>';
