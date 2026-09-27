@@ -80,6 +80,7 @@ function renderAboutHTML() {
     ${paragraphsHTML([about.paragraphs[0]])}
     ${paragraphsHTML(about.paragraphs.slice(1))}
     <p>For information on megagames from other groups you can visit <a href="${escapeAttr(about.assemblyUrl)}">${escapeHtml(about.assemblyLabel)}</a></p>
+    <p>For boardgames in the Oxford area, visit <a href="${escapeAttr(about.meetupUrl)}">${escapeHtml(about.meetupLabel)}</a>.</p>
     <h2>${escapeHtml(conduct.heading)}</h2>
     <p>${escapeHtml(conduct.intro)}</p>
     <p>${escapeHtml(conduct.leadIn)}</p>

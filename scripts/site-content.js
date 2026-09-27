@@ -10,7 +10,9 @@ window.siteContent = {
       'Our games bring players together for negotiation, roleplay, shared stories and mysteries. Explore our past events to see what we have played, and check Ticket Tailor for new announcements.'
     ],
     assemblyUrl: 'https://www.megagameassembly.com/',
-    assemblyLabel: 'megagameassembly.com'
+    assemblyLabel: 'megagameassembly.com',
+    meetupUrl: 'https://www.meetup.com/oxfordonboard/',
+    meetupLabel: 'Oxford On Board on Meetup'
   },
   conduct: {
     heading: 'Code of Conduct',
