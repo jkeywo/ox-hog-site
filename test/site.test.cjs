@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 
 function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileSync('games.neon', 'utf8') })) {
-  const app = { innerHTML: '' };
+  const grid = { innerHTML: '' };
+  const app = { innerHTML: '', querySelector: () => grid };
   const context = vm.createContext({
     URL, Intl, Date, console: { error() {} }, fetch, setInterval() {},
     location: { hash: '#home' },
@@ -13,7 +14,7 @@ function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileS
   });
   vm.runInContext(fs.readFileSync('scripts/site-content.js', 'utf8'), context);
   vm.runInContext(fs.readFileSync('scripts/app.js', 'utf8'), context);
-  return { context, app, run: code => vm.runInContext(code, context) };
+  return { context, app, grid, run: code => vm.runInContext(code, context) };
 }
 
 test('six complete Oxford records, unique slugs, valid local artwork and links', () => {
@@ -57,6 +58,22 @@ test('home shows a useful empty state for an empty event file', async () => {
   assert.match(app.innerHTML, /No upcoming events announced/);
   assert.match(app.innerHTML, /Mailing list coming soon/);
   assert.doesNotMatch(app.innerHTML, /discord|filesusr/);
+});
+
+test('future events sort earliest first, past events latest first, with appropriate ticket actions', async () => {
+  const events = '-\nname: Later\nslug: later\ndate: 2 May 2099\ntickets: https://example.com/later\n-\nname: Earlier\nslug: earlier\ndate: 1 May 2099\ntickets: https://example.com/earlier\n-\nname: Old\nslug: old\ndate: 1 May 2000\n-\nname: Recent\nslug: recent\ndate: 1 May 2001';
+  const { app, grid, context, run } = loadApp(async () => ({ ok: true, text: async () => events }));
+  await run('render()');
+  assert.match(app.innerHTML, /Next Event: Earlier/);
+  assert.doesNotMatch(app.innerHTML, /No upcoming events announced/);
+  context.location.hash = '#upcoming';
+  await run('render()');
+  assert.ok(grid.innerHTML.indexOf('Earlier') < grid.innerHTML.indexOf('Later'));
+  assert.match(grid.innerHTML, />Tickets</);
+  context.location.hash = '#past';
+  await run('render()');
+  assert.ok(grid.innerHTML.indexOf('Recent') < grid.innerHTML.indexOf('Old'));
+  assert.doesNotMatch(grid.innerHTML, />Tickets</);
 });
 
 test('failed HTTP fetch displays recovery links and About still works', async () => {
