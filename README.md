@@ -60,9 +60,11 @@ Optional fields: `theme`, `complexity`, `rules` (HTTPS rules-document link),
 `eventUrl` (original event information, separate from the ticket checkout),
 `ticketLabel` (for example, `SOXS Con tickets`), `bookingNote` (shown beside
 upcoming ticket buttons, including on the homepage),
-and `photos` (comma-separated filenames under `photos/<slug>/`). If adding
-photos, also add `photos` to the public-file list in `tools/package.mjs`.
-There are currently no photo galleries. Descriptions support paragraphs,
+and `photos` (comma-separated filenames under `photos/<slug>/`). The `photos`
+directory is included in site deployments. Galleries currently cover New Eden
+on 12 April and 14 June 2024, and Heist! on 18 October 2024; the seven photos
+were supplied in `archive.zip` and matched by their filenames.
+Descriptions support paragraphs,
 bold and italics; raw HTML is escaped. A `?source=relative-file.neon` query
 can load local test content without changing the main event file.
 
