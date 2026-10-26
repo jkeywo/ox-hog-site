@@ -17,13 +17,13 @@ function loadApp(fetch = async () => ({ ok: true, text: async () => fs.readFileS
   return { context, app, grid, run: code => vm.runInContext(code, context) };
 }
 
-test('eleven complete records, unique slugs, valid local artwork and source links', () => {
+test('twelve complete records, unique slugs, valid local artwork and source links', () => {
   const { context, run } = loadApp();
   context.text = fs.readFileSync('games.neon', 'utf8');
   const games = run('parseNeon(text).map(normalizeGame)');
-  assert.equal(games.length, 11);
-  assert.equal(new Set(games.map(g => g.slug)).size, 11);
-  assert.deepEqual(Array.from(games, g => g.dateKey).sort(), ['2024-04-12','2024-06-14','2024-08-02','2024-10-18','2024-11-02','2025-02-14','2025-05-09','2025-07-04','2025-11-01','2026-09-26','2026-11-07']);
+  assert.equal(games.length, 12);
+  assert.equal(new Set(games.map(g => g.slug)).size, 12);
+  assert.deepEqual(Array.from(games, g => g.dateKey).sort(), ['2024-04-12','2024-06-14','2024-08-02','2024-10-18','2024-11-02','2025-02-14','2025-05-09','2025-07-04','2025-11-01','2026-09-26','2026-11-07','2026-11-14']);
   for (const game of games) {
     assert.match(game.eventUrl || game.tickets, /^https:\/\//);
     assert.ok(game.description.length > 100);
@@ -39,10 +39,12 @@ test('SOXS booking links distinguish convention admission from reserving a game'
   const { context, app, grid, run } = loadApp();
   context.text = fs.readFileSync('games.neon', 'utf8');
   const games = run('parseNeon(text).map(normalizeGame)');
-  const upcoming = games.filter(g => g.dateKey >= '2026-09-27');
-  assert.equal(upcoming.length, 1);
+  const upcoming = games.filter(g => g.dateKey >= '2026-10-26').sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+  assert.equal(upcoming.length, 2);
   assert.equal(upcoming[0].slug, '2026-11-black-swan-soxs');
   assert.match(upcoming[0].tickets, /eventbrite.com\/e\/soxs-con-2026/);
+  assert.equal(upcoming[1].slug, '2026-11-crisis-mars');
+  assert.equal(upcoming[1].tickets, 'https://www.tickettailor.com/events/oxfordhallofgames/2496522');
   context.game = upcoming[0];
   const link = run('ticketsLink(game)');
   assert.match(link, />SOXS Con tickets</);
